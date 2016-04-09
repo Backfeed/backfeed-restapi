@@ -13,6 +13,7 @@ requires = [
     'pyramid_chameleon',
     'pyramid_debugtoolbar',
     'waitress',
+    'backfeed-protocol',
     ]
 
 setup(name='restapi',
@@ -33,6 +34,7 @@ setup(name='restapi',
       include_package_data=True,
       zip_safe=False,
       install_requires=requires,
+      dependency_links=['http://github.com/Backfeed/protocol-python/tarball/master'],
       tests_require=requires,
       test_suite="restapi",
       entry_points="""\
