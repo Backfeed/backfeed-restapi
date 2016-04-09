@@ -1,6 +1,12 @@
-from pyramid.view import view_config
+""" Cornice services.
+"""
+from cornice import Service
 
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
-def my_view(request):
-    return {'project': 'restapi'}
+hello = Service(name='hello', path='/', description="Simplest app")
+
+
+@hello.get()
+def get_info(request):
+    """Returns Hello in JSON."""
+    return {'Hello': 'World'}
