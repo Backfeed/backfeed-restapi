@@ -3,3 +3,6 @@ restapi.egg-info/
 build/
 dist/
 .noseids
+*.egg-info/
+.cache/
+.tox/

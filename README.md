@@ -1,12 +1,12 @@
 # REST API for the backfeed-protocol
 
-## Installation
-
-    python setup.py install
-
 ## Running the tests
 
-    python setup.py test
+    tox
+
+## Installation
+
+    pip install .
 
 ## Starting a server
 

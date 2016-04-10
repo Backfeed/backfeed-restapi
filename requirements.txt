@@ -1,0 +1,6 @@
+pyramid==1.6.1
+pyramid_chameleon
+pyramid_debugtoolbar
+waitress
+cornice
+--editable=/home/jelle/projects/backfeed/protocol-python/src/protocol
