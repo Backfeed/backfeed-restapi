@@ -1,13 +1,22 @@
 # REST API for the backfeed-protocol
 
-## Running the tests
+# Running the tests
 
     tox
 
-## Installation
+# Installation
 
+    cd restapi
     pip install .
 
-## Starting a server
+(installation might fail because the package depends on backfeed-protocol, which needs to live in the same directory as the parent folder of this document)
+
+# Starting a server
+
+    pserve development.ini --reload
 
     
+# Contributing
+
+
+

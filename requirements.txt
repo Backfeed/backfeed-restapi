@@ -3,4 +3,6 @@ pyramid_chameleon
 pyramid_debugtoolbar
 waitress
 cornice
+webtest
+beautifulsoup
 --editable=/home/jelle/projects/backfeed/protocol-python/src/protocol

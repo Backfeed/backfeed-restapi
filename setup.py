@@ -9,12 +9,14 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
 requires = [
-    # 'pyramid',
-    # 'pyramid_chameleon',
-    # 'pyramid_debugtoolbar',
-    # 'waitress',
-    # 'cornice',
-    # 'backfeed-protocol',
+    'webtest',
+    'pyramid',
+    'pyramid_chameleon',
+    'pyramid_debugtoolbar',
+    'waitress',
+    'cornice',
+    'backfeed-protocol',
+    'BeautifulSoup4',
 ]
 
 setup(
