@@ -1,12 +1,15 @@
 import os
 
 from setuptools import setup, find_packages
+import restapi
 
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.md')) as f:
+with open(os.path.join(here, 'README.rst')) as f:
     README = f.read()
 with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
+
+version = restapi.__version__
 
 requires = [
     'webtest',
@@ -21,7 +24,7 @@ requires = [
 
 setup(
     name='backfeed-protocol-restapi',
-    version='0.1',
+    version=version,
     description='restapi',
     long_description=README + '\n\n' + CHANGES,
     classifiers=[
