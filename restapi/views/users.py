@@ -57,5 +57,5 @@ class User(object):
         return {
             'id': user.id,
             'tokens': float(user.tokens),
-            'repuation': float(user.reputation),
+            'reputation': float(user.reputation),
         }
