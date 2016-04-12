@@ -6,4 +6,5 @@ dist/
 *.egg-info/
 .cache/
 .tox/
+docs/_build/.doctrees/
 docs/_build/
