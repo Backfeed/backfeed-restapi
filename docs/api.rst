@@ -2,4 +2,4 @@ API Documentation
 ========================
 
 .. services::
-   :modules: restapi.views
+   :modules: restapi.views.users

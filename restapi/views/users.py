@@ -28,4 +28,19 @@ def get_user(request):
     contract_name = request.matchdict['contract']
     contract = protocol.get_contract(contract_name)
     user = contract.get_user(user_id)
-    return 
+    return {
+        'id': user.id,
+    }
+
+
+@user_service.post()
+def update_user(request):
+    """update the user information"""
+    user_id = request.matchdict['user_id']
+
+    contract_name = request.matchdict['contract']
+    contract = protocol.get_contract(contract_name)
+    user = contract.get_user(user_id)
+    return {
+        'id': user.id,
+    }
