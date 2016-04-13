@@ -40,7 +40,7 @@ class User(object):
 
     @view(renderer='json')
     def put(self):
-        """update information of this user"""
+        """Update information of this user"""
         user_id = self.request.matchdict['id']
         user = self.contract.update_user(user_id=user_id, **self.request.POST)
         return self.user_to_dict(user)
