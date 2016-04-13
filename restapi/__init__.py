@@ -11,5 +11,7 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include("cornice")
     config.scan("restapi.views")
+    config.scan("restapi.views.contributions")
     config.scan("restapi.views.users")
+    config.scan("restapi.views.evaluations")
     return config.make_wsgi_app()

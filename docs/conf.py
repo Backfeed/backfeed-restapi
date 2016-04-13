@@ -199,7 +199,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'alotofeffort.tex', u'A Lot of Effort Documentation',
+  ('index', 'restapi.tex', u'Backfeed Rest API Documentation',
    u'Jelle Gerbrandy', 'manual'),
 ]
 
@@ -229,7 +229,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'alotofeffort', u'A Lot of Effort Documentation',
+    ('index', 'backfeed-restapi', u'Backfeed REST API Documentation',
      [u'Jelle Gerbrandy'], 1)
 ]
 
@@ -243,8 +243,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'alotofeffort', u'A Lot of Effort Documentation',
-   u'Jelle Gerbrandy', 'alotofeffort', 'One line description of project.',
+  ('index', 'backfeed-restapi', u'Backfeed REST API Documentation',
+   u'Jelle Gerbrandy', 'backfeed-restapi', 'One line description of project.',
    'Miscellaneous'),
 ]
 

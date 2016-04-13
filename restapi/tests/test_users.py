@@ -3,9 +3,6 @@ from common import APITestCase
 
 class TestUsers(APITestCase):
 
-    def setUp(self):
-        super(TestUsers, self).setUp()
-
     def test_workflow(self):
         app = self.app
 

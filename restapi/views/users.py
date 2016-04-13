@@ -3,13 +3,14 @@ import protocol
 
 
 @resource(collection_path='/{contract}/users', path='/{contract}/users/{id}')
-class User(object):
+class Users(object):
 
     def __init__(self, request):
         self.request = request
         contract_name = self.request.matchdict['contract']
         self.contract = protocol.get_contract(contract_name)
 
+    @view(renderer='json')
     def collection_get(self):
         """Get a list of users"""
         users = self.contract.get_users()
@@ -26,7 +27,6 @@ class User(object):
 
         :param reputation: the amount of reputation to assign to this user. Must be an integer or a float (like 3.14)
 
-        user
         """
         user = self.contract.create_user(**self.request.POST)
         return self.user_to_dict(user)
