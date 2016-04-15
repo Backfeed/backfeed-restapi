@@ -1,17 +1,14 @@
 import backfeed_protocol
 from backfeed_protocol import utils
 
-SQLITE_FILE = '/tmp/mydatabase.db'
-
 
 def setup_database(sqlite_file=None):
-    if not sqlite_file:
-        sqlite_file = SQLITE_FILE
+    """set up the database - i.e. create all tables"""
     return utils.setup_database(sqlite_file=sqlite_file)
 
 
 def reset_database():
-    """use with care!"""
+    """use with care - removes all data"""
     return utils.reset_database()
 
 
