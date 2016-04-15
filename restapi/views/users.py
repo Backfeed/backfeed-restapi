@@ -1,5 +1,5 @@
 from cornice.resource import resource, view
-import protocol
+from restapi import protocol
 
 
 @resource(collection_path='/{contract}/users', path='/{contract}/users/{id}')

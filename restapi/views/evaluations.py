@@ -1,5 +1,5 @@
 from cornice.resource import resource, view
-import protocol
+from .. import protocol
 
 
 @resource(collection_path='/{contract}/evaluations', path='/{contract}/evaluations/{id}')

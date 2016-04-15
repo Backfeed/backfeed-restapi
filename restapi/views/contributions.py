@@ -1,5 +1,5 @@
 from cornice.resource import resource, view
-import protocol
+from restapi import protocol
 
 
 @resource(collection_path='/{contract}/contributions', path='/{contract}/contributions/{id}')
@@ -38,16 +38,17 @@ class Contributions(object):
         contribution = self.contract.get_contribution(contribution_id)
         return self.to_dict(contribution)
 
-    @view(renderer='json')
-    def put(self):
-        """Update information of this contribution"""
-        contribution_id = self.request.matchdict['id']
-        contribution = self.contract.update_contribution(contribution_id=contribution_id, **self.request.POST)
-        return self.to_dict(contribution)
+    #
+    # @view(renderer='json')
+    # def put(self):
+    #     """Update information of this contribution"""
+    #     contribution_id = self.request.matchdict['id']
+    #     contribution = self.contract.update_contribution(contribution_id=contribution_id, **self.request.POST)
+    #     return self.to_dict(contribution)
 
     @view()
     def delete(self):
-        """Delete this user"""
+        """Delete this contribution"""
         contribution_id = self.request.matchdict['id']
         self.contract.delete_contribution(contribution_id)
 

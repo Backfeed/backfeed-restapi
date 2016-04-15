@@ -6,4 +6,4 @@ cornice
 webtest
 beautifulsoup
 sphinx
---editable=/home/jelle/projects/backfeed/protocol-python/src/protocol
+--editable=/home/jelle/projects/backfeed/protocol-python/src/backfeed_protocol
