@@ -41,7 +41,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,
-    dependency_links=['http://github.com/Backfeed/backfeed-protocol-restapi/tarball/master'],
     tests_require=requires,
     test_suite="restapi",
     entry_points="""\
