@@ -1,3 +1,4 @@
+import os
 import unittest
 from restapi import protocol
 from webtest import TestApp
@@ -7,8 +8,11 @@ from restapi import main
 
 class APITestCase(unittest.TestCase):
     """Base class for testing API functions"""
+
+    sqlite_db = ':memory:'
+
     def setUp(self):
-        sqlite_db = ':memory:'
+        sqlite_db = self.sqlite_db
         protocol.setup_database(sqlite_db)
         self.app = TestApp(main({}, sqlite_db=sqlite_db))
         self.contract_name = 'contract1'
@@ -16,4 +20,5 @@ class APITestCase(unittest.TestCase):
         self.url_users_collection = '/{contract}/users'.format(contract=self.contract_name)
 
     def tearDown(self):
-        protocol.reset_database()
+        if self.sqlite_db != ':memory:':
+            os.remove(self.sqlite_db)
