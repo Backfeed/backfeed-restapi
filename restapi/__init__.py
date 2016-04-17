@@ -7,7 +7,7 @@ __version__ = '0.1'
 
 
 def main(global_config, **settings):
-    import pyramid
+    from pyramid.config import Configurator
     from backfeed_protocol import utils
     # define the database connection
     sqlite_db = settings.get('sqlite_db')
@@ -15,7 +15,7 @@ def main(global_config, **settings):
         raise Exception('please specify the sqlite_db setting')
     utils.init_database(sqlite_db)
 
-    config = pyramid.config.Configurator(settings=settings)
+    config = Configurator(settings=settings)
     config.include("cornice")
     config.scan("restapi.views")
     config.scan("restapi.views.contributions")
