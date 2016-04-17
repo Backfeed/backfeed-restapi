@@ -51,11 +51,12 @@ class Users(object):
         user_id = self.request.matchdict['id']
         self.contract.delete_user(user_id)
 
-    @staticmethod
-    def user_to_dict(user):
+    def user_to_dict(self, user):
         """return a dictionary with information about this user"""
+        total_reputation = self.contract.total_reputation
+        relative_rep = user.reputation / total_reputation
         return {
             'id': user.id,
             'tokens': float(user.tokens),
-            'reputation': float(user.reputation),
+            'reputation': float(relative_rep),
         }
