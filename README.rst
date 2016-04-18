@@ -2,24 +2,29 @@ REST API for the backfeed-protocol
 ===================================
 
 
-Running the tests
--------------------------
-
-    tox
 
 Installation
 -------------------------
-    cd restapi
-    pip install .
 
-(installation might fail because the package depends on backfeed-protocol, which needs to live in the same directory as the parent folder of this document)
+
+You need pip installed::
+
+    sudo apt-get install python-pip
+
+You can now either directly install from the github repository: ::
+
+     pip install git+https://github.com/Backfeed/backfeed-restapi.git
+
 
 Starting a server
--------------------------
+------------------
 
-    pserve development.ini --reload
-
+First you need to create an settings file. You can download it from the git repository: ::
     
+    wget https://raw.githubusercontent.com/Backfeed/backfeed-restapi/master/development.ini
 
+You can then start the server like this: ::
 
+    pserve development.ini 
 
+The default settings will use a database that runs completely in memory, so you will loose any changes after restarting the server.

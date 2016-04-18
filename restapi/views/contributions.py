@@ -52,10 +52,16 @@ class Contributions(object):
         contribution_id = self.request.matchdict['id']
         self.contract.delete_contribution(contribution_id)
 
-    @staticmethod
-    def to_dict(contribution):
+    def to_dict(self, contribution):
         """return a dictionary with information about this contribution"""
+        user = contribution.user
         return {
             'id': contribution.id,
-            'user_id': float(contribution.user.id),
+            'contributor': {
+                'id': user.id,
+                'tokens': user.tokens,
+                'reputation': user.relative_reputation(),
+            },
+            'score': self.contract.contribution_score(contribution),
+            'engaged_reputation': contribution.engaged_reputation(),
         }

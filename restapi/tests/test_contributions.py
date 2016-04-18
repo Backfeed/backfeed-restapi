@@ -1,26 +1,28 @@
 from common import APITestCase
+from ..views.config import URL_CONTRIBUTION_RESOURCE, URL_CONTRIBUTION_COLLECTION
 
 
 class TestContributions(APITestCase):
 
+    def url_resource(self, contribution_id):
+        return URL_CONTRIBUTION_RESOURCE.format(
+            contract=self.contract_name,
+            id=contribution_id,
+        )
+
+    @property
+    def url_collection(self):
+        return URL_CONTRIBUTION_COLLECTION.format(contract=self.contract_name)
+
     def test_workflow(self):
         app = self.app
 
-        url_collection = '/{contract}/contributions'.format(contract=self.contract_name)
-
-        def url_resource(contribution_id):
-            return '/{contract}/contributions/{contribution_id}'.format(
-                contract=self.contract_name,
-                contribution_id=contribution_id,
-            )
-
         # create a user
-        response = app.post(self.url_users_collection)
-        user_id = response.json['id']
+        user = self.contract.create_user()
 
         # create a contribution
-        response = app.post(url_collection, {'user_id': user_id})
-        self.assertEqual(response.json['user_id'], user_id)
+        response = app.post(self.url_collection, {'user_id': user.id})
+        self.assertEqual(response.json['contributor']['id'], user.id)
         contribution_id = response.json['id']
 
         # update a contribution
@@ -28,14 +30,27 @@ class TestContributions(APITestCase):
         # self.assertEqual(response.json['tokens'], 20)
 
         # get the contribution info
-        response = app.get(url_resource(contribution_id))
-        self.assertEqual(response.json['user_id'], user_id)
+        response = app.get(self.url_resource(contribution_id))
+        self.assertEqual(response.json['contributor']['id'], user.id)
 
         # get the contribution collection
-        response = app.get(url_collection)
+        response = app.get(self.url_collection)
         self.assertEqual(response.json.get('count'), 1)
 
-        # delete a contribution
-        response = app.delete(url_resource(contribution_id))
-        response = app.get(url_collection)
-        self.assertEqual(response.json.get('count'), 0)
+        # delete a contribution (this actually never happens)
+        # response = app.delete(url_resource(contribution_id))
+        # response = app.get(url_collection)
+        # self.assertEqual(response.json.get('count'), 0)
+
+    def test_data(self):
+        user = self.contract.create_user()
+        contribution = self.contract.create_contribution(user=user)
+
+        data = self.app.get(self.url_resource(contribution.id)).json
+
+        self.assertEqual(data['id'], contribution.id)
+        self.assertEqual(data['score'], 0.0)
+        self.assertEqual(data['engaged_reputation'], 0)
+        self.assertEqual(data['contributor']['id'], user.id)
+        self.assertEqual(data['contributor']['tokens'], 49.0)
+        self.assertEqual(data['contributor']['reputation'], 1.0)

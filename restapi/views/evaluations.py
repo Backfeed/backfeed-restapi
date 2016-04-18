@@ -10,6 +10,7 @@ class User(object):
         contract_name = self.request.matchdict['contract']
         self.contract = protocol.get_contract(contract_name)
 
+    @view(renderer='json')
     def collection_get(self):
         """Get a list of evaluations"""
         evaluations = self.contract.get_evaluations()
@@ -49,19 +50,28 @@ class User(object):
     #     evaluation_id = self.request.matchdict['id']
     #     evaluation = self.contract.update_evaluation(evaluation_id=evaluation_id, **self.request.POST)
     #     return self.to_dict(evaluation)
-
+    #
     # @view()
     # def delete(self):
     #     """Delete this evaluation"""
     #     evaluation_id = self.request.matchdict['id']
     #     self.contract.delete_evaluation(evaluation_id)
 
-    @staticmethod
-    def to_dict(evaluation):
+    def to_dict(self, evaluation):
         """return a dictionary with information about this evaluation"""
+        contribution = evaluation.contribution
+        evaluator = evaluation.user
         return {
             'id': evaluation.id,
-            'user_id': evaluation.user.id,
-            'contribution_id': evaluation.contribution.id,
+            'evaluator': {
+                'id': evaluator.id,
+                'tokens': evaluator.tokens,
+                'reputation': evaluator.relative_reputation(),
+            },
+            'contribution': {
+                'id': contribution.id,
+                'score': self.contract.contribution_score(contribution),
+                'engaged_reputation': contribution.engaged_reputation(),
+            },
             'value': float(evaluation.value),
         }

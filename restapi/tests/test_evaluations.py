@@ -1,17 +1,19 @@
 from common import APITestCase
+from ..views.config import URL_EVALUATION_COLLECTION, URL_EVALUATION_RESOURCE
 
 
 class TestEvaluations(APITestCase):
 
     def test_workflow(self):
+        # test creating and getting evaluations
         app = self.app
 
-        url_collection = '/{contract}/evaluations'.format(contract=self.contract_name)
+        url_collection = URL_EVALUATION_COLLECTION.format(contract=self.contract_name)
 
         def url_resource(evaluation_id):
-            return '/{contract}/evaluations/{evaluation_id}'.format(
+            return URL_EVALUATION_RESOURCE.format(
                 contract=self.contract_name,
-                evaluation_id=evaluation_id,
+                id=evaluation_id,
             )
 
         # create a user and a contribution to evaluate
@@ -36,3 +38,21 @@ class TestEvaluations(APITestCase):
         # get the evaluation collection
         response = app.get(url_collection)
         self.assertEqual(response.json.get('count'), 1)
+
+    def test_evaluation_data(self):
+        # test that GETting an evaluation returns all expected data
+        user = self.contract.create_user()
+        contribution = self.contract.create_contribution(user=user)
+        value = 3.14
+        evaluation = self.contract.create_evaluation(
+            contribution=contribution, value=value, user=user)
+
+        url = URL_EVALUATION_RESOURCE.format(id=evaluation.id, contract=self.contract_name)
+        info = self.app.get(url).json
+        self.assertEqual(info['value'], value)
+        self.assertEqual(info['contribution']['id'], contribution.id)
+        self.assertEqual(info['contribution']['score'], 0.0)
+        self.assertEqual(info['contribution']['engaged_reputation'], user.reputation)
+        self.assertEqual(info['evaluator']['id'], user.id)
+        self.assertEqual(info['evaluator']['tokens'], 49)
+        self.assertEqual(info['evaluator']['reputation'], 1)
