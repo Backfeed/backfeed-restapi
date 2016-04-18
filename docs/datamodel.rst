@@ -1,7 +1,7 @@
 Data Model
 ====================
 
-The basic objects of the protocol as ``users``, ``contributions`` and **evaluations``.
+The basic objects of the protocol as ``users``, ``contributions`` and ``evaluations``.
 
 
 Users
