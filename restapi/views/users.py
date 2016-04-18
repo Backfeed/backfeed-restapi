@@ -19,11 +19,15 @@ def collection_get(request):
 
 @user_collection_service.post(validators=(get_contract,))
 def collection_post(request):
-    """Create a *new user*
+    """Create a new user.
 
-    :param tokens: the amount of tokens to assign to this user. Must be an integer or a float (like 3.14)
+    :param tokens:
+        The amount of tokens to assign to this user.
+        Must be an integer or a float (like 3.14). Not required.
 
-    :param reputation: the amount of reputation to assign to this user. Must be an integer or a float (like 3.14)
+    :param reputation:
+        The amount of reputation to assign to this user.
+        Must be an integer or a float (like 3.14). Not required.
 
     """
     user = request.contract.create_user(**request.POST)
@@ -32,14 +36,14 @@ def collection_post(request):
 
 @user_resource_service.get(validators=(get_contract,))
 def get(request):
-    """Get the user"""
+    """Get the user identified by ``id``"""
     user_id = request.matchdict['id']
     user = request.contract.get_user(user_id)
     return user_to_dict(user)
 
 
 def user_to_dict(user):
-    """return a dictionary with information about this user"""
+    """returns a dictionary with information about the user"""
     return {
         'id': user.id,
         'tokens': float(user.tokens),
