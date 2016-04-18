@@ -1,62 +1,47 @@
-from cornice.resource import resource, view
-from restapi import protocol
+from cornice import Service
 
 import config
+from utils import get_contract
+
+user_collection_service = Service(name='User Collection', path=config.URL_USER_COLLECTION, description="Users")
+user_resource_service = Service(name='User Resource', path=config.URL_USER_RESOURCE, description="Users")
 
 
-@resource(collection_path=config.URL_USER_COLLECTION, path=config.URL_USER_RESOURCE)
-class Users(object):
+@user_collection_service.get(validators=(get_contract,))
+def collection_get(request):
+    """Get a list of users"""
+    users = request.contract.get_users()
+    return {
+        'count': len(users),
+        'items': [user_to_dict(user) for user in users],
+    }
 
-    def __init__(self, request):
-        self.request = request
-        contract_name = self.request.matchdict['contract']
-        self.contract = protocol.get_contract(contract_name)
 
-    @view(renderer='json')
-    def collection_get(self):
-        """Get a list of users"""
-        users = self.contract.get_users()
-        return {
-            'count': len(users),
-            'items': [self.user_to_dict(user) for user in users],
-        }
+@user_collection_service.post(validators=(get_contract,))
+def collection_post(request):
+    """Create a *new user*
 
-    @view(renderer='json')
-    def collection_post(self):
-        """Create a *new user*
+    :param tokens: the amount of tokens to assign to this user. Must be an integer or a float (like 3.14)
 
-        :param tokens: the amount of tokens to assign to this user. Must be an integer or a float (like 3.14)
+    :param reputation: the amount of reputation to assign to this user. Must be an integer or a float (like 3.14)
 
-        :param reputation: the amount of reputation to assign to this user. Must be an integer or a float (like 3.14)
+    """
+    user = request.contract.create_user(**request.POST)
+    return user_to_dict(user)
 
-        """
-        user = self.contract.create_user(**self.request.POST)
-        return self.user_to_dict(user)
 
-    @view(renderer='json')
-    def get(self):
-        """Get the user"""
-        user_id = self.request.matchdict['id']
-        user = self.contract.get_user(user_id)
-        return self.user_to_dict(user)
+@user_resource_service.get(validators=(get_contract,))
+def get(request):
+    """Get the user"""
+    user_id = request.matchdict['id']
+    user = request.contract.get_user(user_id)
+    return user_to_dict(user)
 
-    # @view(renderer='json')
-    # def put(self):
-    #     """Update information of this user"""
-    #     user_id = self.request.matchdict['id']
-    #     user = self.contract.update_user(user_id=user_id, **self.request.POST)
-    #     return self.user_to_dict(user)
 
-    # @view()
-    # def delete(self):
-    #     """Delete this user"""
-    #     user_id = self.request.matchdict['id']
-    #     self.contract.delete_user(user_id)
-
-    def user_to_dict(self, user):
-        """return a dictionary with information about this user"""
-        return {
-            'id': user.id,
-            'tokens': float(user.tokens),
-            'reputation': user.relative_reputation(),
-        }
+def user_to_dict(user):
+    """return a dictionary with information about this user"""
+    return {
+        'id': user.id,
+        'tokens': float(user.tokens),
+        'reputation': user.relative_reputation(),
+    }

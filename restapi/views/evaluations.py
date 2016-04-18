@@ -1,77 +1,78 @@
-from cornice.resource import resource, view
-from .. import protocol
+from cornice import Service
+
+import config
+from utils import get_contract
 
 
-@resource(collection_path='/{contract}/evaluations', path='/{contract}/evaluations/{id}')
-class User(object):
+evaluation_collection_service = Service(name='Evaluation Collection', path=config.URL_EVALUATION_COLLECTION, description="Evaluations")
+evaluation_resource_service = Service(name='Evaluation Resource', path=config.URL_EVALUATION_RESOURCE, description="Evaluations")
 
-    def __init__(self, request):
-        self.request = request
-        contract_name = self.request.matchdict['contract']
-        self.contract = protocol.get_contract(contract_name)
 
-    @view(renderer='json')
-    def collection_get(self):
-        """Get a list of evaluations"""
-        evaluations = self.contract.get_evaluations()
-        return {
-            'count': len(evaluations),
-            'items': [self.to_dict(evaluation) for evaluation in evaluations],
-        }
+@evaluation_collection_service.get(validators=(get_contract,))
+def collection_get(request):
+    """Get a list of users"""
+    evaluations = request.contract.get_evaluations()
+    return {
+        'count': len(evaluations),
+        'items': [evaluation_to_dict(evaluation, request) for evaluation in evaluations],
+    }
 
-    @view(renderer='json')
-    def collection_post(self):
-        """Create a new evaluation
 
-        :param user_id: required
-        :param contribution_id: required
-        :param value: required
-        """
-        user = self.contract.get_user(self.request.POST['user_id'])
-        contribution = self.contract.get_contribution(self.request.POST['contribution_id'])
-        value = self.request.POST['value']
-        evaluation = self.contract.create_evaluation(
-            user=user,
-            contribution=contribution,
-            value=value,
-        )
-        return self.to_dict(evaluation)
+@evaluation_collection_service.post(validators=(get_contract,))
+def collection_post(request):
+    """Create a new evaluation.
 
-    @view(renderer='json')
-    def get(self):
-        """Get the evaluation"""
-        evaluation_id = self.request.matchdict['id']
-        evaluation = self.contract.get_evaluation(evaluation_id)
-        return self.to_dict(evaluation)
+    Creating an evaluation will update tokens and reputation from the contributor,
+    the evaluator, and previous evaluators.
 
-    # @view(renderer='json')
-    # def put(self):
-    #     """Update information of this user"""
-    #     evaluation_id = self.request.matchdict['id']
-    #     evaluation = self.contract.update_evaluation(evaluation_id=evaluation_id, **self.request.POST)
-    #     return self.to_dict(evaluation)
-    #
-    # @view()
-    # def delete(self):
-    #     """Delete this evaluation"""
-    #     evaluation_id = self.request.matchdict['id']
-    #     self.contract.delete_evaluation(evaluation_id)
+    :param evaluator_id:
+        required. The id of the user to that does the evaluation.
+    :param contribution_id:
+        required. The id of the contribution that is being evaluated
+    :param value:
+        required. This is a number - which values are accepted depends on the contract.
 
-    def to_dict(self, evaluation):
-        """return a dictionary with information about this evaluation"""
-        contribution = evaluation.contribution
-        evaluator = evaluation.user
-        return {
-            'id': evaluation.id,
-            'evaluator': {
-                'id': evaluator.id,
-                'tokens': evaluator.tokens,
-                'reputation': evaluator.relative_reputation(),
-            },
-            'contribution': {
-                'id': contribution.id,
-                'score': self.contract.contribution_score(contribution),
-                'engaged_reputation': contribution.engaged_reputation(),
-            },
-            'value': float(evaluation.value),
-        }
+
+    :returns:
+        information about the added evaluation
+
+    """
+    user = request.contract.get_user(request.POST['evaluator_id'])
+    contribution = request.contract.get_contribution(request.POST['contribution_id'])
+    value = request.POST['value']
+    evaluation = request.contract.create_evaluation(
+        user=user,
+        contribution=contribution,
+        value=value,
+    )
+    return evaluation_to_dict(evaluation, request)
+
+
+@evaluation_resource_service.get(validators=(get_contract,))
+def get(request):
+    """Get evaluations from the contract
+
+    """
+    evaluation_id = request.matchdict['id']
+    evaluation = request.contract.get_evaluation(evaluation_id)
+    return evaluation_to_dict(evaluation, request)
+
+
+def evaluation_to_dict(evaluation, request):
+    """return a dictionary with information about this evaluation"""
+    contribution = evaluation.contribution
+    evaluator = evaluation.user
+    return {
+        'id': evaluation.id,
+        'evaluator': {
+            'id': evaluator.id,
+            'tokens': evaluator.tokens,
+            'reputation': evaluator.relative_reputation(),
+        },
+        'contribution': {
+            'id': contribution.id,
+            'score': request.contract.contribution_score(contribution),
+            'engaged_reputation': contribution.engaged_reputation(),
+        },
+        'value': float(evaluation.value),
+    }

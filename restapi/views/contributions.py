@@ -1,67 +1,56 @@
-from cornice.resource import resource, view
-from restapi import protocol
+from cornice import Service
+
+import config
+from utils import get_contract
 
 
-@resource(collection_path='/{contract}/contributions', path='/{contract}/contributions/{id}')
-class Contributions(object):
+contribution_collection_service = Service(name='Contribution Collection', path=config.URL_CONTRIBUTION_COLLECTION, description="Contributions")
+contribution_resource_service = Service(name='Contribution Resource', path=config.URL_CONTRIBUTION_RESOURCE, description="Contributions")
 
-    def __init__(self, request):
-        self.request = request
-        contract_name = self.request.matchdict['contract']
-        self.contract = protocol.get_contract(contract_name)
 
-    def collection_get(self):
+@contribution_collection_service.get(validators=(get_contract,))
+def collection_get(request):
         """Get a list of contributions"""
-        contributions = self.contract.get_contributions()
+        contributions = request.contract.get_contributions()
         return {
             'count': len(contributions),
-            'items': [self.to_dict(contribution) for contribution in contributions],
+            'items': [contribution_to_dict(contribution, request) for contribution in contributions],
         }
 
-    @view(renderer='json')
-    def collection_post(self):
+
+@contribution_collection_service.post(validators=(get_contract,))
+def collection_post(request):
         """Create a new contribution
 
-        :param user_id: required, the id of an user
+        :param contributor_id:
+            the id of the user that has made the contribution
 
-        :returns: information about the new contributions
+        :returns: information about the new contribution
         """
-        user_id = self.request.POST['user_id']
-        user = self.contract.get_user(user_id)
-        contribution = self.contract.create_contribution(user=user)
-        return self.to_dict(contribution)
+        user_id = request.POST['user_id']
+        user = request.contract.get_user(user_id)
+        contribution = request.contract.create_contribution(user=user)
+        return contribution_to_dict(contribution, request)
 
-    @view(renderer='json')
-    def get(self):
-        """Get the contribution"""
-        contribution_id = self.request.matchdict['id']
-        contribution = self.contract.get_contribution(contribution_id)
-        return self.to_dict(contribution)
 
-    #
-    # @view(renderer='json')
-    # def put(self):
-    #     """Update information of this contribution"""
-    #     contribution_id = self.request.matchdict['id']
-    #     contribution = self.contract.update_contribution(contribution_id=contribution_id, **self.request.POST)
-    #     return self.to_dict(contribution)
+@contribution_resource_service.get(validators=(get_contract,))
+def get(request):
+    """Get the contribution"""
+    contribution_id = request.matchdict['id']
+    contribution = request.contract.get_contribution(contribution_id)
+    return contribution_to_dict(contribution, request)
 
-    @view()
-    def delete(self):
-        """Delete this contribution"""
-        contribution_id = self.request.matchdict['id']
-        self.contract.delete_contribution(contribution_id)
 
-    def to_dict(self, contribution):
-        """return a dictionary with information about this contribution"""
-        user = contribution.user
-        return {
-            'id': contribution.id,
-            'contributor': {
-                'id': user.id,
-                'tokens': user.tokens,
-                'reputation': user.relative_reputation(),
-            },
-            'score': self.contract.contribution_score(contribution),
-            'engaged_reputation': contribution.engaged_reputation(),
-        }
+def contribution_to_dict(contribution, request):
+    """return a dictionary with information about this contribution"""
+    user = contribution.user
+    return {
+        'id': contribution.id,
+        'contributor': {
+            'id': user.id,
+            'tokens': user.tokens,
+            'reputation': user.relative_reputation(),
+        },
+        'score': request.contract.contribution_score(contribution),
+        'engaged_reputation': contribution.engaged_reputation(),
+    }

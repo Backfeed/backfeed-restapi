@@ -28,3 +28,9 @@ You can then start the server like this: ::
     pserve development.ini 
 
 The default settings will use a database that runs completely in memory, so you will loose any changes after restarting the server.
+
+
+Contributing
+-------------
+
+

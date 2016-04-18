@@ -24,7 +24,7 @@ class TestEvaluations(APITestCase):
         response = app.post(
             url_collection,
             {
-                'user_id': user.id,
+                'evaluator_id': user.id,
                 'contribution_id': contribution.id,
                 'value': 10,
             }
