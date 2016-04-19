@@ -27,7 +27,7 @@ def collection_post(request):
 
         :returns: information about the new contribution
         """
-        user_id = request.POST['user_id']
+        user_id = request.POST['contributor_id']
         user = request.contract.get_user(user_id)
         contribution = request.contract.create_contribution(user=user)
         return contribution_to_dict(contribution, request)

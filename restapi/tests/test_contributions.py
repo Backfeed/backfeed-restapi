@@ -21,7 +21,7 @@ class TestContributions(APITestCase):
         user = self.contract.create_user()
 
         # create a contribution
-        response = app.post(self.url_collection, {'user_id': user.id})
+        response = app.post(self.url_collection, {'contributor_id': user.id})
         self.assertEqual(response.json['contributor']['id'], user.id)
         contribution_id = response.json['id']
 
