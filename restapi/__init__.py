@@ -1,7 +1,6 @@
 """Main entry point
 """
 import os
-import logging
 
 __author__ = 'Jelle Gerbrandy'
 __email__ = 'jelle@gerbrandy.com'
@@ -21,7 +20,6 @@ def main(global_config, **settings):
     if sqlite_db != ':memory:':
         # create the database file if it does not exists
         if not os.path.exists(sqlite_db):
-            logging.DEBUG('Setting up database at {sqlite_db}'.format(sqlite_db=sqlite_db))
             utils.setup_database(sqlite_db)
         try:
             database.connect()
