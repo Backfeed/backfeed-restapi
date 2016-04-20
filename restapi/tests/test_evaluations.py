@@ -75,6 +75,12 @@ class TestEvaluations(APITestCase):
         self.assertEqual(response.json.get('count'), 2)
         response = self.app.get(self.url_collection, {'contributor_id': user1.id})
         self.assertEqual(response.json.get('count'), 1)
+        response = self.app.get(self.url_collection, {'contributor_id': 12345})
+        self.assertEqual(response.json.get('count'), 0)
+
+        # test error handling
+        response = self.app.get(self.url_collection, {'contributor_id': 'xx'}, expect_errors=True)
+        self.assertEqual(response.status, '400 Bad Request')
 
     def test_evaluation_errors(self):
         user = self.contract.create_user()
@@ -90,4 +96,4 @@ class TestEvaluations(APITestCase):
             },
             expect_errors=True,
         )
-        self.assertTrue(response.status, 'xx')
+        self.assertEqual(response.status, '400 Bad Request')
