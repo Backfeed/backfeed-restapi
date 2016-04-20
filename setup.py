@@ -20,6 +20,7 @@ requires = [
     'cornice',
     'backfeed-protocol',
     'BeautifulSoup4',
+    'colander',
 ]
 
 setup(

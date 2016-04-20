@@ -1,9 +1,15 @@
 import os
 import unittest
+import logging
 from restapi import protocol
 from webtest import TestApp
 
 from restapi import main
+
+
+# shut up peewee
+peewee_logger = logging.getLogger('peewee')
+peewee_logger.setLevel(logging.ERROR)
 
 
 class APITestCase(unittest.TestCase):

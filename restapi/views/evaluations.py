@@ -2,23 +2,34 @@ from cornice import Service
 
 import config
 from utils import get_contract
-
+from colander import MappingSchema, SchemaNode, Float, Integer
 
 evaluation_collection_service = Service(name='Evaluation Collection', path=config.URL_EVALUATION_COLLECTION, description="Evaluations")
 evaluation_resource_service = Service(name='Evaluation Resource', path=config.URL_EVALUATION_RESOURCE, description="Evaluations")
 
 
-@evaluation_collection_service.get(validators=(get_contract,))
+class EvaluationCollectionGetSchema(MappingSchema):
+    contribution_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
+    contributor_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
+
+
+@evaluation_collection_service.get(validators=(get_contract,), schema=EvaluationCollectionGetSchema)
 def collection_get(request):
     """Get a list of users"""
-    evaluations = request.contract.get_evaluations()
+    evaluations = request.contract.get_evaluations(**request.validated)
     return {
         'count': len(evaluations),
         'items': [evaluation_to_dict(evaluation, request) for evaluation in evaluations],
     }
 
 
-@evaluation_collection_service.post(validators=(get_contract,))
+class Evaluationschema(MappingSchema):
+    value = SchemaNode(Float(), location='body', type='int')
+    evaluator_id = SchemaNode(Integer(), location='body', type='int')
+    contribution_id = SchemaNode(Integer(), location='body', type='int')
+
+
+@evaluation_collection_service.post(validators=(get_contract,), schema=Evaluationschema)
 def collection_post(request):
     """Create a new evaluation.
 
@@ -37,14 +48,18 @@ def collection_post(request):
         information about the added evaluation
 
     """
-    user = request.contract.get_user(request.POST['evaluator_id'])
-    contribution = request.contract.get_contribution(request.POST['contribution_id'])
-    value = request.POST['value']
-    evaluation = request.contract.create_evaluation(
-        user=user,
-        contribution=contribution,
-        value=value,
-    )
+    user = request.contract.get_user(request.validated['evaluator_id'])
+    contribution = request.contract.get_contribution(request.validated['contribution_id'])
+    value = request.validated['value']
+    try:
+        evaluation = request.contract.create_evaluation(
+            user=user,
+            contribution=contribution,
+            value=value,
+        )
+    except ValueError as error:
+        request.errors.add('query', 'value error', unicode(error))
+        return
     return evaluation_to_dict(evaluation, request)
 
 
