@@ -54,3 +54,4 @@ class TestContributions(APITestCase):
         self.assertEqual(data['contributor']['id'], user.id)
         self.assertEqual(data['contributor']['tokens'], 49.0)
         self.assertEqual(data['contributor']['reputation'], 1.0)
+        self.assertEqual(data['type'], 'article')

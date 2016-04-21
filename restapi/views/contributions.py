@@ -53,4 +53,5 @@ def contribution_to_dict(contribution, request):
         },
         'score': request.contract.contribution_score(contribution),
         'engaged_reputation': contribution.engaged_reputation(),
+        'type': contribution.contribution_type,
     }
