@@ -1,7 +1,8 @@
 REST API for the backfeed-protocol
+===================================
+
 .. image:: https://travis-ci.org/Backfeed/backfeed-restapi.svg?branch=master
     :target: https://travis-ci.org/Backfeed/backfeed-restapi
-===================================
 
 
 
