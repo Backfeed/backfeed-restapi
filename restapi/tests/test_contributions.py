@@ -1,3 +1,5 @@
+import types
+
 from common import APITestCase
 from ..views.config import URL_CONTRIBUTION_RESOURCE, URL_CONTRIBUTION_COLLECTION
 
@@ -49,6 +51,8 @@ class TestContributions(APITestCase):
         # check the data returned by POST request
         response = self.app.post(self.url_collection, {'contributor_id': user.id})
         data = response.json
+        contribution_id = data['id']
+        contribution = self.contract.get_contribution(contribution_id)
 
         self.assertTrue(data['id'])
         self.assertEqual(data['score'], 0.0)
@@ -57,7 +61,18 @@ class TestContributions(APITestCase):
         self.assertEqual(data['contributor']['tokens'], 49.0)
         self.assertEqual(data['contributor']['reputation'], 1.0)
         self.assertEqual(data['type'], 'article')
+        self.assertEqual(data['stats']['evaluations'], {})
 
         # they should be the same as those returned by the GET request
-        data_get = self.app.get(self.url_resource(data['id'])).json
+        data_get = self.app.get(self.url_resource(contribution_id)).json
         self.assertEqual(data, data_get)
+
+        # now check if we get the right statistics
+        evaluator = self.contract.create_user()
+        self.contract.create_evaluation(contribution=contribution, user=evaluator, value=1)
+        evaluator = self.contract.create_user()
+        self.contract.create_evaluation(contribution=contribution, user=evaluator, value=0)
+
+        data = self.app.get(self.url_resource(contribution_id)).json
+        self.assertEqual(type(data['stats']['evaluations']['0']['reputation']), types.FloatType)
+        self.assertEqual(type(data['stats']['evaluations']['1']['reputation']), types.FloatType)

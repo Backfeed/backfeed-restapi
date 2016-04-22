@@ -13,4 +13,4 @@ def reset_database():
 
 
 def get_contract(contract):
-    return backfeed_protocol.get_contract(contract)
+    return backfeed_protocol.utils.get_contract(contract)

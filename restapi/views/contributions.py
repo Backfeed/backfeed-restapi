@@ -44,6 +44,7 @@ def get(request):
 def contribution_to_dict(contribution, request):
     """return a dictionary with information about this contribution"""
     user = contribution.user
+    stats = contribution.get_statistics()
     return {
         'id': contribution.id,
         'contributor': {
@@ -54,4 +55,5 @@ def contribution_to_dict(contribution, request):
         'score': request.contract.contribution_score(contribution),
         'engaged_reputation': contribution.engaged_reputation(),
         'type': contribution.contribution_type,
+        'stats': stats,
     }
