@@ -44,14 +44,20 @@ class TestContributions(APITestCase):
 
     def test_data(self):
         user = self.contract.create_user()
-        contribution = self.contract.create_contribution(user=user)
+        # contribution = self.contract.create_contribution(user=user)
 
-        data = self.app.get(self.url_resource(contribution.id)).json
+        # check the data returned by POST request
+        response = self.app.post(self.url_collection, {'contributor_id': user.id})
+        data = response.json
 
-        self.assertEqual(data['id'], contribution.id)
+        self.assertTrue(data['id'])
         self.assertEqual(data['score'], 0.0)
         self.assertEqual(data['engaged_reputation'], 0)
         self.assertEqual(data['contributor']['id'], user.id)
         self.assertEqual(data['contributor']['tokens'], 49.0)
         self.assertEqual(data['contributor']['reputation'], 1.0)
         self.assertEqual(data['type'], 'article')
+
+        # they should be the same as those returned by the GET request
+        data_get = self.app.get(self.url_resource(data['id'])).json
+        self.assertEqual(data, data_get)

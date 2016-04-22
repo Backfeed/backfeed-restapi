@@ -31,6 +31,7 @@ evaluated the contribution. ::
         'id': 12345,
         'score': 0.30, 
         'engaged_reputation': 0.4, 
+        'type': 'article',
         'contributor' : {
            'id': 123,
            'tokens': 11.3,

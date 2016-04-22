@@ -7,9 +7,13 @@
 Contents:
 =========
 
+This API is still in development (on https://github.com/Backfeed/backfeed-restapi). 
+
+
 .. toctree::
    :maxdepth: 2
 
    readme
    datamodel
    api
+
