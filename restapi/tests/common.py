@@ -1,30 +1,27 @@
-import os
 import unittest
-import logging
-from restapi import protocol
+from backfeed_protocol import utils
 from webtest import TestApp
 
 from restapi import main
 
 
-# shut up peewee
-peewee_logger = logging.getLogger('peewee')
-peewee_logger.setLevel(logging.ERROR)
-
-
 class APITestCase(unittest.TestCase):
     """Base class for testing API functions"""
 
-    sqlite_db = ':memory:'
     contract_name = 'contract1'
+    settings = {
+        'sqlalchemy.url': 'sqlite:///:memory:',
+    }
 
     def setUp(self):
-        sqlite_db = self.sqlite_db
-        protocol.setup_database(sqlite_db)
-        self.app = TestApp(main({}, sqlite_db=sqlite_db))
-        self.contract = protocol.get_contract(self.contract_name)
+        self.app = TestApp(main({}, **self.settings))
+        utils.setup_database(self.settings)
+        from backfeed_protocol.models import Base
+        from backfeed_protocol.models import DBSession
+        engine = DBSession.connection().engine
+        Base.metadata.create_all(engine)
+        self.contract = utils.get_contract()
         self.url_users_collection = '/{contract}/users'.format(contract=self.contract_name)
 
     def tearDown(self):
-        if self.sqlite_db != ':memory:':
-            os.remove(self.sqlite_db)
+        utils.reset_database()

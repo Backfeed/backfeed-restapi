@@ -10,7 +10,7 @@ evaluation_resource_service = Service(name='Evaluation Resource', path=config.UR
 
 class EvaluationCollectionGetSchema(MappingSchema):
     contribution_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
-    contributor_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
+    evaluator_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
 
 
 @evaluation_collection_service.get(validators=(get_contract,), schema=EvaluationCollectionGetSchema)

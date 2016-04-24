@@ -71,15 +71,15 @@ class TestEvaluations(APITestCase):
         self.assertEqual(response.json.get('count'), 3)
         response = self.app.get(self.url_collection, {'contribution_id': contribution0.id})
         self.assertEqual(response.json.get('count'), 2)
-        response = self.app.get(self.url_collection, {'contributor_id': user0.id})
+        response = self.app.get(self.url_collection, {'evaluator_id': user0.id})
         self.assertEqual(response.json.get('count'), 2)
-        response = self.app.get(self.url_collection, {'contributor_id': user1.id})
+        response = self.app.get(self.url_collection, {'evaluator_id': user1.id})
         self.assertEqual(response.json.get('count'), 1)
-        response = self.app.get(self.url_collection, {'contributor_id': 12345})
+        response = self.app.get(self.url_collection, {'evaluator_id': 12345})
         self.assertEqual(response.json.get('count'), 0)
 
         # test error handling
-        response = self.app.get(self.url_collection, {'contributor_id': 'xx'}, expect_errors=True)
+        response = self.app.get(self.url_collection, {'evaluator_id': 'xx'}, expect_errors=True)
         self.assertEqual(response.status, '400 Bad Request')
 
     def test_evaluation_errors(self):
