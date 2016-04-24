@@ -16,12 +16,11 @@ class APITestCase(unittest.TestCase):
     def setUp(self):
         self.app = TestApp(main({}, **self.settings))
         utils.setup_database(self.settings)
-        from backfeed_protocol.models import Base
-        from backfeed_protocol.models import DBSession
-        engine = DBSession.connection().engine
-        Base.metadata.create_all(engine)
         self.contract = utils.get_contract()
-        self.url_users_collection = '/{contract}/users'.format(contract=self.contract_name)
 
     def tearDown(self):
         utils.reset_database()
+
+    @property
+    def url_users_collection(self):
+        return '/{contract}/users'.format(contract=self.contract_name)
