@@ -21,6 +21,7 @@ requires = [
     'backfeed-protocol',
     'BeautifulSoup4',
     'colander',
+    'sqlalchemy',
 ]
 
 setup(
