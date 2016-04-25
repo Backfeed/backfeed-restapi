@@ -55,8 +55,8 @@ class TestContributions(APITestCase):
         contribution = self.contract.get_contribution(contribution_id)
 
         self.assertTrue(data['id'])
-        self.assertEqual(data['score'], 0.0)
-        self.assertEqual(data['engaged_reputation'], 0)
+        self.assertEqual(data['stats']['score'], 0.0)
+        self.assertEqual(data['stats']['engaged_reputation'], 0)
         self.assertEqual(data['contributor']['id'], user.id)
         self.assertEqual(data['contributor']['tokens'], 49.0)
         self.assertEqual(data['contributor']['reputation'], 1.0)
