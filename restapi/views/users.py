@@ -1,4 +1,5 @@
 from cornice import Service
+from colander import MappingSchema, SchemaNode, Float, Integer
 
 import config
 from utils import get_contract
@@ -17,7 +18,13 @@ def collection_get(request):
     }
 
 
-@user_collection_service.post(validators=(get_contract,))
+class UserSchema(MappingSchema):
+    reputation = SchemaNode(Float(), location='body', type='float', missing=None)
+    tokens = SchemaNode(Float(), location='body', type='float', missing=None)
+    referrer_id = SchemaNode(Integer(), location='body', type='int', missing=None)
+
+
+@user_collection_service.post(validators=(get_contract,), schema=UserSchema)
 def collection_post(request):
     """Create a new user.
 
@@ -30,7 +37,11 @@ def collection_post(request):
         Must be an integer or a float (like 3.14). Not required.
 
     """
-    user = request.contract.create_user(**request.POST)
+    try:
+        user = request.contract.create_user(**request.validated)
+    except ValueError as error:
+        request.errors.add('query', 'value error', unicode(error))
+        return
     return user_to_dict(user)
 
 
@@ -44,8 +55,12 @@ def get(request):
 
 def user_to_dict(user):
     """returns a dictionary with information about the user"""
-    return {
+    result = {
         'id': user.id,
         'tokens': float(user.tokens),
         'reputation': user.relative_reputation(),
     }
+    if user.referrer:
+        result['referrer'] = {}
+        result['referrer']['id'] = user.referrer.id
+    return result

@@ -20,17 +20,17 @@ def collection_get(request):
 
 @contribution_collection_service.post(validators=(get_contract,))
 def collection_post(request):
-        """Create a new contribution
+    """Create a new contribution
 
-        :param contributor_id:
-            the id of the user that has made the contribution
+    :param contributor_id:
+        the id of the user that has made the contribution
 
-        :returns: information about the new contribution
-        """
-        user_id = request.POST['contributor_id']
-        user = request.contract.get_user(user_id)
-        contribution = request.contract.create_contribution(user=user)
-        return contribution_to_dict(contribution, request)
+    :returns: information about the new contribution
+    """
+    user_id = request.POST['contributor_id']
+    user = request.contract.get_user(user_id)
+    contribution = request.contract.create_contribution(user=user)
+    return contribution_to_dict(contribution, request)
 
 
 @contribution_resource_service.get(validators=(get_contract,))

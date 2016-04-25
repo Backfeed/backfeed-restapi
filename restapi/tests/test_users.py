@@ -47,3 +47,21 @@ class TestUsers(APITestCase):
         user_info = self.app.get(self.url_resource(user1.id)).json
         # reputation should be returned as a fraction of the total reputation
         self.assertEqual(user_info['reputation'], 0.25)
+
+    def test_user_creation(self):
+        app = self.app
+        url_collection = self.url_collection
+        # create a user
+        response = app.post(url_collection, {'tokens': 10, 'reputation': 3.14})
+        self.assertEqual(response.json['tokens'], 10)
+        # returns the *relative* reputation
+        self.assertEqual(response.json['reputation'], 1.0)
+        user_id = response.json['id']
+
+        # create a referring user
+        response = app.post(url_collection, {'referrer_id': user_id})
+        self.assertEqual(response.json['referrer']['id'], user_id)
+
+        # try with a non-exising reference
+        response = app.post(url_collection, {'referrer_id': 123456}, expect_errors=True)
+        self.assertEqual(response.status, '400 Bad Request')
