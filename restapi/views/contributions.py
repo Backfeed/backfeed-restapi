@@ -1,4 +1,5 @@
 from cornice import Service
+from colander import MappingSchema, SchemaNode, Integer, String
 
 import config
 from utils import get_contract
@@ -8,17 +9,40 @@ contribution_collection_service = Service(name='Contribution Collection', path=c
 contribution_resource_service = Service(name='Contribution Resource', path=config.URL_CONTRIBUTION_RESOURCE, description="Contributions")
 
 
-@contribution_collection_service.get(validators=(get_contract,))
+class ContributionQuerySchema(MappingSchema):
+    contributor_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
+    order_by = SchemaNode(String(), location='querystring', type='str', missing='-score')
+    limit = SchemaNode(Integer(), location='querystring', type='int', missing=100)
+    start = SchemaNode(Integer(), location='querystring', type='int', missing=0)
+
+
+@contribution_collection_service.get(validators=(get_contract,), schema=ContributionQuerySchema)
 def collection_get(request):
-        """Get a list of contributions"""
-        contributions = request.contract.get_contributions()
+        """Get a list of contributions.
+
+        The parameter 'order_by' can take as its values:
+
+        - *score* order by score
+        - *-score*  order descendingly, by score
+        - *time*: the time the contribution was added
+        - *-time*: last-added first
+        """
+        contributions = request.contract.get_contributions(**request.validated)
         return {
-            'count': len(contributions),
+            '_meta': {
+                'total': request.contract.contributions_count(),
+                'limit': request.validated['limit'],
+                'start': request.validated['start'],
+            },
             'items': [contribution_to_dict(contribution, request) for contribution in contributions],
         }
 
 
-@contribution_collection_service.post(validators=(get_contract,))
+class ContributionSchema(MappingSchema):
+    contributor_id = SchemaNode(Integer(), location='body', type='int')
+
+
+@contribution_collection_service.post(validators=(get_contract,), schema=ContributionSchema)
 def collection_post(request):
     """Create a new contribution
 
@@ -27,7 +51,7 @@ def collection_post(request):
 
     :returns: information about the new contribution
     """
-    user_id = request.POST['contributor_id']
+    user_id = request.validated['contributor_id']
     user = request.contract.get_user(user_id)
     contribution = request.contract.create_contribution(user=user)
     return contribution_to_dict(contribution, request)

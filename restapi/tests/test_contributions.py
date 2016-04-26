@@ -1,5 +1,5 @@
 import types
-
+from datetime import datetime
 from common import APITestCase
 from ..views.config import URL_CONTRIBUTION_RESOURCE, URL_CONTRIBUTION_COLLECTION
 
@@ -37,12 +37,7 @@ class TestContributions(APITestCase):
 
         # get the contribution collection
         response = app.get(self.url_collection)
-        self.assertEqual(response.json.get('count'), 1)
-
-        # delete a contribution (this actually never happens)
-        # response = app.delete(url_resource(contribution_id))
-        # response = app.get(url_collection)
-        # self.assertEqual(response.json.get('count'), 0)
+        self.assertEqual(response.json['_meta']['total'], 1)
 
     def test_data(self):
         user = self.contract.create_user()
@@ -82,3 +77,54 @@ class TestContributions(APITestCase):
         self.assertLess(data['stats']['engaged_reputation'], 1.0)
         self.assertLess(data['stats']['evaluations']['0']['reputation'], 1.0)
         self.assertLess(data['stats']['evaluations']['1']['reputation'], 1.0)
+
+    def test_collection_get(self):
+        # have some data to test with
+        contract = self.contract
+        user0 = contract.create_user()
+        user1 = contract.create_user()
+
+        contribution0 = contract.create_contribution(user=user0)
+        contribution1 = contract.create_contribution(user=user0)
+        contribution2 = contract.create_contribution(user=user1)
+        contribution0.time = datetime(2010, 1, 1)
+        contribution1.time = datetime(2011, 1, 1)
+        contribution2.time = datetime(2012, 1, 1)
+
+        # add some evaluations to determine the score
+        contract.create_evaluation(contribution=contribution1, user=user0, value=1)
+        contract.create_evaluation(contribution=contribution2, user=user0, value=1)
+        contract.create_evaluation(contribution=contribution2, user=user1, value=1)
+
+        app = self.app
+        url = self.url_collection
+
+        result = app.get(url).json
+        self.assertEqual(result['_meta']['total'], 3)
+        self.assertEqual(result['_meta']['start'], 0)
+        self.assertEqual(len(result['items']), 3)
+
+        result = app.get(url, {'limit': 1}).json
+        self.assertEqual(len(result['items']), 1)
+
+        result = app.get(url, {'start': 2}).json
+        self.assertEqual(result['_meta']['start'], 2)
+        self.assertEqual(len(result['items']), 1)
+
+        # check ordering - we have set up things such that
+        # the contribution2 has the highest score, and contribution0 the lowest
+        result = app.get(url).json
+        self.assertEqual(result['items'][0]['id'], contribution2.id)
+        self.assertEqual(result['items'][2]['id'], contribution0.id)
+
+        result = app.get(url, {'order_by': '-score'}).json
+        self.assertEqual(result['items'][0]['id'], contribution2.id)
+        self.assertEqual(result['items'][2]['id'], contribution0.id)
+
+        result = app.get(url, {'order_by': 'time'}).json
+        self.assertEqual(result['items'][0]['id'], contribution0.id)
+        self.assertEqual(result['items'][2]['id'], contribution2.id)
+
+        result = app.get(url, {'order_by': '-time'}).json
+        self.assertEqual(result['items'][0]['id'], contribution2.id)
+        self.assertEqual(result['items'][2]['id'], contribution0.id)

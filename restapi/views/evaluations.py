@@ -8,12 +8,12 @@ evaluation_collection_service = Service(name='Evaluation Collection', path=confi
 evaluation_resource_service = Service(name='Evaluation Resource', path=config.URL_EVALUATION_RESOURCE, description="Evaluations")
 
 
-class EvaluationCollectionGetSchema(MappingSchema):
+class EvaluationQuerySchema(MappingSchema):
     contribution_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
     evaluator_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
 
 
-@evaluation_collection_service.get(validators=(get_contract,), schema=EvaluationCollectionGetSchema)
+@evaluation_collection_service.get(validators=(get_contract,), schema=EvaluationQuerySchema)
 def collection_get(request):
     """Get a list of users"""
     evaluations = request.contract.get_evaluations(**request.validated)
@@ -23,13 +23,13 @@ def collection_get(request):
     }
 
 
-class Evaluationschema(MappingSchema):
+class EvaluationSchema(MappingSchema):
     value = SchemaNode(Float(), location='body', type='int')
     evaluator_id = SchemaNode(Integer(), location='body', type='int')
     contribution_id = SchemaNode(Integer(), location='body', type='int')
 
 
-@evaluation_collection_service.post(validators=(get_contract,), schema=Evaluationschema)
+@evaluation_collection_service.post(validators=(get_contract,), schema=EvaluationSchema)
 def collection_post(request):
     """Create a new evaluation.
 
