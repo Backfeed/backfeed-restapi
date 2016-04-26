@@ -45,6 +45,13 @@ def contribution_to_dict(contribution, request):
     """return a dictionary with information about this contribution"""
     user = contribution.user
     stats = contribution.get_statistics()
+    # show only normalized values for the reputation fields
+    stats['engaged_reputation'] = stats['engaged_reputation_normal']
+    del stats['engaged_reputation_normal']
+    for val in stats['evaluations']:
+        stats['evaluations'][val]['reputation'] = stats['evaluations'][val]['reputation_normal']
+        del stats['evaluations'][val]['reputation_normal']
+
     return {
         'id': contribution.id,
         'contributor': {

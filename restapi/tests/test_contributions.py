@@ -76,3 +76,9 @@ class TestContributions(APITestCase):
         data = self.app.get(self.url_resource(contribution_id)).json
         self.assertEqual(type(data['stats']['evaluations']['0']['reputation']), types.FloatType)
         self.assertEqual(type(data['stats']['evaluations']['1']['reputation']), types.FloatType)
+
+        # check also if we have normalized the reputation
+        # (i.e. it should be between 0 and 1)
+        self.assertLess(data['stats']['engaged_reputation'], 1.0)
+        self.assertLess(data['stats']['evaluations']['0']['reputation'], 1.0)
+        self.assertLess(data['stats']['evaluations']['1']['reputation'], 1.0)
