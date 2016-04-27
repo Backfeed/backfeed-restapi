@@ -86,6 +86,21 @@ To get tox, just pip install it.
 
 .. _Fork: addrepolinkhere
 
+Testing with a postgres server
+-------------------------------
+
+If you want to use the API with a postgres backend, you need a postgres server installed.
+These are the instructions to create a test database that is needed to make the postgres test run.
+
+    $ sudo su postgres -c "createuser backfeed-test -SDRP"
+
+supply `backfeed` as the password.
+
+Now create the test database:
+
+  $ sudo su postgres -c "createdb backfeed-test --owner=backfeed-test"
+
+
 Pull Request Guidelines
 -----------------------
 

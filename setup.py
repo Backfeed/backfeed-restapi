@@ -22,6 +22,7 @@ requires = [
     'BeautifulSoup4',
     'colander',
     'sqlalchemy',
+    'psycopg2',
 ]
 
 setup(

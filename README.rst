@@ -36,4 +36,5 @@ The default settings will use a database that runs completely in memory, so you 
 Contributing
 -------------
 
+See CONTRIBUTING.rst
 
