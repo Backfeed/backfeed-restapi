@@ -42,7 +42,9 @@ class TestEvaluations(APITestCase):
 
     def test_evaluation_data(self):
         # test that GETting an evaluation returns all expected data
-        user = self.contract.create_user()
+        user = self.contract.create_user(tokens=100)
+        # create another user just to make the numbers more meaningful
+        self.contract.create_user()
         contribution = self.contract.create_contribution(user=user)
         evaluation = self.contract.create_evaluation(
             contribution=contribution, value=1, user=user)
@@ -51,11 +53,11 @@ class TestEvaluations(APITestCase):
         info = self.app.get(url).json
         self.assertEqual(info['value'], 1)
         self.assertEqual(info['contribution']['id'], contribution.id)
-        self.assertEqual(info['contribution']['score'], 1.0)
-        self.assertEqual(info['contribution']['engaged_reputation'], user.reputation)
+        self.assertEqual(info['contribution']['engaged_reputation'], user.relative_reputation())
+        self.assertGreater(info['contribution']['score'], 0)
         self.assertEqual(info['evaluator']['id'], user.id)
         self.assertEqual(info['evaluator']['tokens'], 99)
-        self.assertEqual(info['evaluator']['reputation'], 1)
+        self.assertEqual(info['evaluator']['reputation'], user.relative_reputation())
 
     def test_evaluation_collection_get(self):
         # add some data
