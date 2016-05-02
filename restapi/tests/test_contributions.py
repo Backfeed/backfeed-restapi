@@ -40,7 +40,7 @@ class TestContributions(APITestCase):
         self.assertEqual(response.json['_meta']['total'], 1)
 
     def test_data(self):
-        user = self.contract.create_user()
+        user = self.contract.create_user(reputation=3.141)
         # contribution = self.contract.create_contribution(user=user)
 
         # check the data returned by POST request
@@ -56,14 +56,14 @@ class TestContributions(APITestCase):
         self.assertEqual(data['contributor']['tokens'], 49.0)
         self.assertEqual(data['contributor']['reputation'], 1.0)
         self.assertEqual(data['type'], 'article')
-        self.assertEqual(data['stats']['evaluations'], {})
+        self.assertEqual(data['stats']['evaluations'].keys(), ['1', '0'])
 
         # they should be the same as those returned by the GET request
         data_get = self.app.get(self.url_resource(contribution_id)).json
         self.assertEqual(data, data_get)
 
         # now check if we get the right statistics
-        evaluator = self.contract.create_user()
+        evaluator = self.contract.create_user(reputation=3.141)
         self.contract.create_evaluation(contribution=contribution, user=evaluator, value=1)
         evaluator = self.contract.create_user()
         self.contract.create_evaluation(contribution=contribution, user=evaluator, value=0)
@@ -81,8 +81,8 @@ class TestContributions(APITestCase):
     def test_collection_get(self):
         # have some data to test with
         contract = self.contract
-        user0 = contract.create_user()
-        user1 = contract.create_user()
+        user0 = contract.create_user(reputation=3.141)
+        user1 = contract.create_user(reputation=3.141)
 
         contribution0 = contract.create_contribution(user=user0)
         contribution1 = contract.create_contribution(user=user0)

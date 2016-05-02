@@ -8,7 +8,7 @@ from restapi import main
 class APITestCase(unittest.TestCase):
     """Base class for testing API functions"""
 
-    contract_name = 'contract1'
+    contract_name = 'example'
     settings = {
         'sqlalchemy.url': 'sqlite:///:memory:',
     }

@@ -42,9 +42,9 @@ class TestEvaluations(APITestCase):
 
     def test_evaluation_data(self):
         # test that GETting an evaluation returns all expected data
-        user = self.contract.create_user(tokens=100)
+        user = self.contract.create_user(tokens=100, reputation=3.141)
         # create another user just to make the numbers more meaningful
-        self.contract.create_user()
+        self.contract.create_user(reputation=3.141)
         contribution = self.contract.create_contribution(user=user)
         evaluation = self.contract.create_evaluation(
             contribution=contribution, value=1, user=user)

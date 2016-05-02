@@ -87,7 +87,7 @@ def evaluation_to_dict(evaluation, request):
         'contribution': {
             'id': contribution.id,
             'score': request.contract.contribution_score(contribution),
-            'engaged_reputation': contribution.engaged_reputation() / contribution.contract.total_reputation(),
+            'engaged_reputation': contribution.engaged_reputation_normal(),
         },
         'value': float(evaluation.value),
     }
