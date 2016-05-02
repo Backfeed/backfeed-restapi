@@ -24,11 +24,12 @@ def main(global_config, **settings):
     from pyramid.config import Configurator
     from sqlalchemy import engine_from_config
     from sqlalchemy.orm import sessionmaker
-    from backfeed_protocol import utils
+    from backfeed_protocol.models import initialize_sql
 
     config = Configurator(settings=settings)
     engine = engine_from_config(settings, prefix='sqlalchemy.')
-    utils.setup_database(settings=settings)
+    initialize_sql(engine)
+
     config.registry.dbmaker = sessionmaker(bind=engine)
     config.add_request_method(db, reify=True)
 
