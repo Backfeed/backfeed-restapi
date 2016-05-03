@@ -16,7 +16,7 @@ class APITestCase(unittest.TestCase):
     def setUp(self):
         self.app = TestApp(main({}, **self.settings))
         utils.setup_database(self.settings)
-        self.contract = utils.get_contract(name='example')
+        self.contract = utils.get_contract(name=self.contract_name)
 
     def tearDown(self):
         utils.reset_database()

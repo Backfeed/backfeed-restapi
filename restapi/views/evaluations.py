@@ -4,6 +4,8 @@ import config
 from utils import get_contract
 from colander import MappingSchema, SchemaNode, Float, Integer
 
+from users import user_to_dict
+
 evaluation_collection_service = Service(name='Evaluation Collection', path=config.URL_EVALUATION_COLLECTION, description="Evaluations")
 evaluation_resource_service = Service(name='Evaluation Resource', path=config.URL_EVALUATION_RESOURCE, description="Evaluations")
 
@@ -79,11 +81,7 @@ def evaluation_to_dict(evaluation, request):
     evaluator = evaluation.user
     return {
         'id': evaluation.id,
-        'evaluator': {
-            'id': evaluator.id,
-            'tokens': evaluator.tokens,
-            'reputation': evaluator.relative_reputation(),
-        },
+        'evaluator': user_to_dict(evaluator),
         'contribution': {
             'id': contribution.id,
             'score': request.contract.contribution_score(contribution),

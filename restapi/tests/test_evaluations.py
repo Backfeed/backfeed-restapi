@@ -57,7 +57,8 @@ class TestEvaluations(APITestCase):
         self.assertGreater(info['contribution']['score'], 0)
         self.assertEqual(info['evaluator']['id'], user.id)
         self.assertEqual(info['evaluator']['tokens'], 99)
-        self.assertEqual(info['evaluator']['reputation'], user.relative_reputation())
+        self.assertEqual(info['evaluator']['reputation_normalized'], user.relative_reputation())
+        self.assertEqual(info['evaluator']['reputation'], user.reputation)
 
     def test_evaluation_collection_get(self):
         # add some data
