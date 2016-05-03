@@ -58,7 +58,9 @@ def user_to_dict(user):
     result = {
         'id': user.id,
         'tokens': float(user.tokens),
-        'reputation': user.relative_reputation(),
+        'reputation': user.reputation,
+        'reputation_normalized': user.relative_reputation(),
+        'total_reputation': user.contract.total_reputation(),
     }
     if user.referrer:
         result['referrer'] = {}

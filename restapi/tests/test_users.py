@@ -35,27 +35,26 @@ class TestUsers(APITestCase):
         response = app.get(url_collection)
         self.assertEqual(response.json.get('count'), 1)
 
-        # delete user
-        # response = app.delete(url_resource(user_id))
-        # response = app.get(url_collection)
-        # self.assertEqual(response.json.get('count'), 0)
-
     def test_user_info(self):
         user1 = self.contract.create_user(reputation=10)
         self.contract.create_user(reputation=30)
 
-        user_info = self.app.get(self.url_resource(user1.id)).json
+        response = self.app.get(self.url_resource(user1.id))
         # reputation should be returned as a fraction of the total reputation
-        self.assertEqual(user_info['reputation'], 0.25)
+        self.assertEqual(response.json['reputation_normalized'], 0.25)
+        self.assertEqual(response.json['reputation'], 10)
+        self.assertEqual(response.json['total_reputation'], 40)
 
     def test_user_creation(self):
         app = self.app
         url_collection = self.url_collection
         # create a user
-        response = app.post(url_collection, {'tokens': 10, 'reputation': 3.14})
+        response = app.post(url_collection, {'tokens': 10, 'reputation': 3.141})
         self.assertEqual(response.json['tokens'], 10)
         # returns the *relative* reputation
-        self.assertEqual(response.json['reputation'], 1.0)
+        self.assertEqual(response.json['reputation_normalized'], 1.0)
+        self.assertEqual(response.json['reputation'], 3.141)
+        self.assertEqual(response.json['total_reputation'], 3.141)
         user_id = response.json['id']
 
         # create a referring user
