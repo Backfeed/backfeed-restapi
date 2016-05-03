@@ -8,7 +8,7 @@ from restapi import main
 class APITestCase(unittest.TestCase):
     """Base class for testing API functions"""
 
-    contract_name = 'example'
+    contract_name = u'example'
     settings = {
         'sqlalchemy.url': 'sqlite:///:memory:',
     }
@@ -16,7 +16,7 @@ class APITestCase(unittest.TestCase):
     def setUp(self):
         self.app = TestApp(main({}, **self.settings))
         utils.setup_database(self.settings)
-        self.contract = utils.get_contract()
+        self.contract = utils.get_contract(name='example')
 
     def tearDown(self):
         utils.reset_database()
