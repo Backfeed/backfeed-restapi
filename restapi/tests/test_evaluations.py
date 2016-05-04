@@ -40,7 +40,7 @@ class TestEvaluations(APITestCase):
         response = app.get(self.url_collection)
         self.assertEqual(response.json.get('count'), 1)
 
-    def test_evaluation_data(self):
+    def test_evaluation_get(self):
         # test that GETting an evaluation returns all expected data
         user = self.contract.create_user(tokens=100, reputation=3.141)
         # create another user just to make the numbers more meaningful
@@ -51,6 +51,25 @@ class TestEvaluations(APITestCase):
 
         url = URL_EVALUATION_RESOURCE.format(id=evaluation.id, contract=self.contract_name)
         info = self.app.get(url).json
+        self.assertEqual(info['value'], 1)
+        self.assertEqual(info['contribution']['id'], contribution.id)
+        self.assertEqual(info['contribution']['engaged_reputation'], user.relative_reputation())
+        self.assertGreater(info['contribution']['score'], 0)
+        self.assertEqual(info['evaluator']['id'], user.id)
+        self.assertEqual(info['evaluator']['tokens'], 99)
+        self.assertEqual(info['evaluator']['reputation_normalized'], user.relative_reputation())
+        self.assertEqual(info['evaluator']['reputation'], user.reputation)
+
+    def test_evaluation_post(self):
+        # test that GETting an evaluation returns all expected data
+        user = self.contract.create_user(tokens=100, reputation=3.141)
+        # create another user just to make the numbers more meaningful
+        self.contract.create_user(reputation=3.141)
+        contribution = self.contract.create_contribution(user=user)
+        data = dict(contribution_id=contribution.id, value=1, evaluator_id=user.id)
+
+        url = self.url_collection
+        info = self.app.post(url, data).json
         self.assertEqual(info['value'], 1)
         self.assertEqual(info['contribution']['id'], contribution.id)
         self.assertEqual(info['contribution']['engaged_reputation'], user.relative_reputation())
