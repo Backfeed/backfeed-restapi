@@ -1,3 +1,4 @@
+import pyramid.httpexceptions as exc
 from cornice import Service
 from colander import MappingSchema, SchemaNode, Float, Integer
 
@@ -50,6 +51,8 @@ def get(request):
     """Get the user identified by ``id``"""
     user_id = request.matchdict['id']
     user = request.contract.get_user(user_id)
+    if not user:
+        raise exc.HTTPNotFound()
     return user_to_dict(user)
 
 

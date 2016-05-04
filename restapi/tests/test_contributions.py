@@ -128,3 +128,9 @@ class TestContributions(APITestCase):
         result = app.get(url, {'order_by': '-time'}).json
         self.assertEqual(result['items'][0]['id'], contribution2.id)
         self.assertEqual(result['items'][2]['id'], contribution0.id)
+
+    def test_errors(self):
+        response = self.app.get(self.url_resource(123455), expect_errors=True)
+        self.assertEqual(response.status_code, 404)
+        response = self.app.get(self.url_resource('astring'), expect_errors=True)
+        self.assertEqual(response.status_code, 404)

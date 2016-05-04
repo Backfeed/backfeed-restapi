@@ -1,3 +1,4 @@
+import pyramid.httpexceptions as exc
 from cornice import Service
 
 import config
@@ -72,6 +73,8 @@ def get(request):
     """
     evaluation_id = request.matchdict['id']
     evaluation = request.contract.get_evaluation(evaluation_id)
+    if not evaluation:
+        raise exc.HTTPNotFound()
     return evaluation_to_dict(evaluation, request)
 
 

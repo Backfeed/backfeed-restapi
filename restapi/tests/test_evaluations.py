@@ -7,15 +7,15 @@ class TestEvaluations(APITestCase):
     def url_collection(self):
         return URL_EVALUATION_COLLECTION.format(contract=self.contract_name)
 
-    def test_workflow(self):
-        # test creating and getting evaluations
-        app = self.app
-
-        def url_resource(evaluation_id):
+    def url_resource(self, evaluation_id):
             return URL_EVALUATION_RESOURCE.format(
                 contract=self.contract_name,
                 id=evaluation_id,
             )
+
+    def test_workflow(self):
+        # test creating and getting evaluations
+        app = self.app
 
         # create a user and a contribution to evaluate
         user = self.contract.create_user()
@@ -34,7 +34,7 @@ class TestEvaluations(APITestCase):
         evaluation_id = response.json['id']
 
         # get the evaluation info
-        response = app.get(url_resource(evaluation_id))
+        response = app.get(self.url_resource(evaluation_id))
 
         # get the evaluation collection
         response = app.get(self.url_collection)
@@ -119,3 +119,9 @@ class TestEvaluations(APITestCase):
             expect_errors=True,
         )
         self.assertEqual(response.status, '400 Bad Request')
+
+    def test_errors(self):
+        response = self.app.get(self.url_resource(123455), expect_errors=True)
+        self.assertEqual(response.status_code, 404)
+        response = self.app.get(self.url_resource('astring'), expect_errors=True)
+        self.assertEqual(response.status_code, 404)

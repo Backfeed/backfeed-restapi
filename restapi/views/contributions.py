@@ -1,3 +1,4 @@
+import pyramid.httpexceptions as exc
 from cornice import Service
 from colander import MappingSchema, SchemaNode, Integer, String
 
@@ -62,6 +63,8 @@ def get(request):
     """Get the contribution"""
     contribution_id = request.matchdict['id']
     contribution = request.contract.get_contribution(contribution_id)
+    if not contribution:
+        raise exc.HTTPNotFound()
     return contribution_to_dict(contribution, request)
 
 
