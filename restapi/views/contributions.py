@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from cornice import Service
-from colander import MappingSchema, SchemaNode, Integer, String
+from colander import SchemaNode, Integer, String
 
 import config
 from utils import get_contract
@@ -39,7 +39,7 @@ def collection_get(request):
         }
 
 
-class ContributionSchema(MappingSchema):
+class ContributionSchema(StrictMappingSchema):
     contributor_id = SchemaNode(Integer(), location='body', type='int')
 
 

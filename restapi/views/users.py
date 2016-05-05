@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from cornice import Service
-from colander import MappingSchema, SchemaNode, Float, Integer
+from colander import SchemaNode, Float, Integer
 
 import config
 from utils import get_contract
@@ -24,7 +24,7 @@ def collection_get(request):
     }
 
 
-class UserSchema(MappingSchema):
+class UserSchema(StrictMappingSchema):
     reputation = SchemaNode(Float(), location='body', type='float', missing=None)
     tokens = SchemaNode(Float(), location='body', type='float', missing=None)
     referrer_id = SchemaNode(Integer(), location='body', type='int', missing=None)

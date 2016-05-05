@@ -3,7 +3,7 @@ from cornice import Service
 
 import config
 from utils import get_contract
-from colander import MappingSchema, SchemaNode, Float, Integer
+from colander import SchemaNode, Float, Integer
 from utils import StrictMappingSchema
 from users import user_to_dict
 
@@ -26,7 +26,7 @@ def collection_get(request):
     }
 
 
-class EvaluationSchema(MappingSchema):
+class EvaluationSchema(StrictMappingSchema):
     value = SchemaNode(Float(), location='body', type='int')
     evaluator_id = SchemaNode(Integer(), location='body', type='int')
     contribution_id = SchemaNode(Integer(), location='body', type='int')
