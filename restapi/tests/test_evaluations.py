@@ -120,8 +120,12 @@ class TestEvaluations(APITestCase):
         )
         self.assertEqual(response.status, '400 Bad Request')
 
-    def test_errors(self):
+    def test_errors_resource(self):
         response = self.app.get(self.url_resource(123455), expect_errors=True)
         self.assertEqual(response.status_code, 404)
         response = self.app.get(self.url_resource('astring'), expect_errors=True)
         self.assertEqual(response.status_code, 404)
+
+    def test_errors_collection(self):
+        response = self.app.get(self.url_collection, {'nonexisting': '1'}, expect_errors=True)
+        self.assertEqual(response.status_code, 400)

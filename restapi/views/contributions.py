@@ -4,13 +4,13 @@ from colander import MappingSchema, SchemaNode, Integer, String
 
 import config
 from utils import get_contract
-
+from utils import StrictMappingSchema
 
 contribution_collection_service = Service(name='Contribution Collection', path=config.URL_CONTRIBUTION_COLLECTION, description="Contributions")
 contribution_resource_service = Service(name='Contribution Resource', path=config.URL_CONTRIBUTION_RESOURCE, description="Contributions")
 
 
-class ContributionQuerySchema(MappingSchema):
+class ContributionQuerySchema(StrictMappingSchema):
     contributor_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
     order_by = SchemaNode(String(), location='querystring', type='str', missing='-score')
     limit = SchemaNode(Integer(), location='querystring', type='int', missing=100)

@@ -4,12 +4,17 @@ from colander import MappingSchema, SchemaNode, Float, Integer
 
 import config
 from utils import get_contract
+from utils import StrictMappingSchema
 
 user_collection_service = Service(name='User Collection', path=config.URL_USER_COLLECTION, description="Users")
 user_resource_service = Service(name='User Resource', path=config.URL_USER_RESOURCE, description="Users")
 
 
-@user_collection_service.get(validators=(get_contract,))
+class UserQuerySchema(StrictMappingSchema):
+    pass
+
+
+@user_collection_service.get(validators=(get_contract,), schema=UserQuerySchema)
 def collection_get(request):
     """Get a list of users"""
     users = request.contract.get_users()

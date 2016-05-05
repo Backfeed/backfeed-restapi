@@ -4,14 +4,14 @@ from cornice import Service
 import config
 from utils import get_contract
 from colander import MappingSchema, SchemaNode, Float, Integer
-
+from utils import StrictMappingSchema
 from users import user_to_dict
 
 evaluation_collection_service = Service(name='Evaluation Collection', path=config.URL_EVALUATION_COLLECTION, description="Evaluations")
 evaluation_resource_service = Service(name='Evaluation Resource', path=config.URL_EVALUATION_RESOURCE, description="Evaluations")
 
 
-class EvaluationQuerySchema(MappingSchema):
+class EvaluationQuerySchema(StrictMappingSchema):
     contribution_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
     evaluator_id = SchemaNode(Integer(), location='querystring', type='int', missing=None)
 
