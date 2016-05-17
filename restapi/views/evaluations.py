@@ -21,8 +21,14 @@ class EvaluationQuerySchema(StrictMappingSchema):
 def collection_get(request):
     """Get a list of users"""
     evaluations = request.contract.get_evaluations(**request.validated)
+    evaluation_count = request.contract.get_evaluations_count(**request.validated)
     return {
         'count': len(evaluations),
+        '_meta': {
+            'total': evaluation_count,
+            # 'limit': request.validated['limit'],
+            'start': 0,
+        },
         'items': [evaluation_to_dict(evaluation, request) for evaluation in evaluations],
     }
 

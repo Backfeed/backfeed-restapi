@@ -19,7 +19,11 @@ def collection_get(request):
     """Get a list of users"""
     users = request.contract.get_users()
     return {
-        'count': len(users),
+        '_meta': {
+            'total': request.contract.get_users_count(),
+            # 'limit': request.validated['limit'],
+            'start': 0,
+        },
         'items': [user_to_dict(user) for user in users],
     }
 

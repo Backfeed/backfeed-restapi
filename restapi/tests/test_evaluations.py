@@ -90,15 +90,16 @@ class TestEvaluations(APITestCase):
         self.contract.create_evaluation(contribution=contribution1, value=1, user=user0)
 
         response = self.app.get(self.url_collection)
-        self.assertEqual(response.json.get('count'), 3)
+        self.assertEqual(response.json['_meta']['total'], 3)
+        self.assertEqual(response.json['_meta']['start'], 0)
         response = self.app.get(self.url_collection, {'contribution_id': contribution0.id})
-        self.assertEqual(response.json.get('count'), 2)
+        self.assertEqual(response.json['_meta']['total'], 2)
         response = self.app.get(self.url_collection, {'evaluator_id': user0.id})
-        self.assertEqual(response.json.get('count'), 2)
+        self.assertEqual(response.json['_meta']['total'], 2)
         response = self.app.get(self.url_collection, {'evaluator_id': user1.id})
-        self.assertEqual(response.json.get('count'), 1)
+        self.assertEqual(response.json['_meta']['total'], 1)
         response = self.app.get(self.url_collection, {'evaluator_id': 12345})
-        self.assertEqual(response.json.get('count'), 0)
+        self.assertEqual(response.json['_meta']['total'], 0)
 
         # test error handling
         response = self.app.get(self.url_collection, {'evaluator_id': 'xx'}, expect_errors=True)

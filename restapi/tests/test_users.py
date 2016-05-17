@@ -33,7 +33,7 @@ class TestUsers(APITestCase):
 
         # get the user collection
         response = app.get(url_collection)
-        self.assertEqual(response.json.get('count'), 1)
+        self.assertEqual(response.json['_meta']['total'], 1)
 
     def test_user_info(self):
         user1 = self.contract.create_user(reputation=10)
@@ -44,6 +44,12 @@ class TestUsers(APITestCase):
         self.assertEqual(response.json['reputation_normalized'], 0.25)
         self.assertEqual(response.json['reputation'], 10)
         self.assertEqual(response.json['total_reputation'], 40)
+
+    def test_user_collection_get(self):
+        self.contract.create_user()
+        response = self.app.get(self.url_collection)
+        self.assertEqual(response.json['_meta']['start'], 0)
+        self.assertEqual(response.json['_meta']['total'], 1)
 
     def test_user_creation(self):
         app = self.app
