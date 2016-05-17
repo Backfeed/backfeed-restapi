@@ -6,6 +6,7 @@ from utils import get_contract
 from colander import SchemaNode, Float, Integer
 from utils import StrictMappingSchema
 from users import user_to_dict
+from contributions import contribution_to_dict
 
 evaluation_collection_service = Service(name='Evaluation Collection', path=config.URL_EVALUATION_COLLECTION, description="Evaluations")
 evaluation_resource_service = Service(name='Evaluation Resource', path=config.URL_EVALUATION_RESOURCE, description="Evaluations")
@@ -80,15 +81,10 @@ def get(request):
 
 def evaluation_to_dict(evaluation, request):
     """return a dictionary with information about this evaluation"""
-    contribution = evaluation.contribution
     evaluator = evaluation.user
     return {
         'id': evaluation.id,
         'evaluator': user_to_dict(evaluator),
-        'contribution': {
-            'id': contribution.id,
-            'score': request.contract.contribution_score(contribution),
-            'engaged_reputation': contribution.engaged_reputation_normal(),
-        },
+        'contribution': contribution_to_dict(evaluation.contribution),
         'value': float(evaluation.value),
     }

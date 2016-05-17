@@ -35,7 +35,7 @@ def collection_get(request):
                 'limit': request.validated['limit'],
                 'start': request.validated['start'],
             },
-            'items': [contribution_to_dict(contribution, request) for contribution in contributions],
+            'items': [contribution_to_dict(contribution) for contribution in contributions],
         }
 
 
@@ -55,7 +55,7 @@ def collection_post(request):
     user_id = request.validated['contributor_id']
     user = request.contract.get_user(user_id)
     contribution = request.contract.create_contribution(user=user)
-    return contribution_to_dict(contribution, request)
+    return contribution_to_dict(contribution)
 
 
 @contribution_resource_service.get(validators=(get_contract,))
@@ -65,10 +65,10 @@ def get(request):
     contribution = request.contract.get_contribution(contribution_id)
     if not contribution:
         raise exc.HTTPNotFound()
-    return contribution_to_dict(contribution, request)
+    return contribution_to_dict(contribution)
 
 
-def contribution_to_dict(contribution, request):
+def contribution_to_dict(contribution):
     """return a dictionary with information about this contribution"""
     user = contribution.user
     stats = contribution.get_statistics()

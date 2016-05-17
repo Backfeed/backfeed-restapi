@@ -53,8 +53,8 @@ class TestEvaluations(APITestCase):
         info = self.app.get(url).json
         self.assertEqual(info['value'], 1)
         self.assertEqual(info['contribution']['id'], contribution.id)
-        self.assertEqual(info['contribution']['engaged_reputation'], user.relative_reputation())
-        self.assertGreater(info['contribution']['score'], 0)
+        self.assertEqual(info['contribution']['stats']['engaged_reputation'], user.relative_reputation())
+        self.assertGreater(info['contribution']['stats']['score'], 0)
         self.assertEqual(info['evaluator']['id'], user.id)
         self.assertEqual(info['evaluator']['tokens'], 99)
         self.assertEqual(info['evaluator']['reputation_normalized'], user.relative_reputation())
@@ -72,8 +72,8 @@ class TestEvaluations(APITestCase):
         info = self.app.post(url, data).json
         self.assertEqual(info['value'], 1)
         self.assertEqual(info['contribution']['id'], contribution.id)
-        self.assertEqual(info['contribution']['engaged_reputation'], user.relative_reputation())
-        self.assertGreater(info['contribution']['score'], 0)
+        self.assertEqual(info['contribution']['stats']['engaged_reputation'], user.relative_reputation())
+        self.assertGreater(info['contribution']['stats']['score'], 0)
         self.assertEqual(info['evaluator']['id'], user.id)
         self.assertEqual(info['evaluator']['tokens'], 99)
         self.assertEqual(info['evaluator']['reputation_normalized'], user.relative_reputation())
