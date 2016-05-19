@@ -38,15 +38,6 @@ class UserSchema(StrictMappingSchema):
 @user_collection_service.post(validators=(get_contract,), schema=UserSchema)
 def collection_post(request):
     """Create a new user.
-
-    :param tokens:
-        The amount of tokens to assign to this user.
-        Must be an integer or a float (like 3.14). Not required.
-
-    :param reputation:
-        The amount of reputation to assign to this user.
-        Must be an integer or a float (like 3.14). Not required.
-
     """
     try:
         user = request.contract.create_user(**request.validated)

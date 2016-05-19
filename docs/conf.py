@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 #
 # complexity documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul  9 22:26:36 2013.
@@ -20,6 +21,7 @@ import cornice
 #sys.path.insert(0, os.path.abspath('.'))
 
 cwd = os.getcwd()
+sys.path.insert(0, cwd)
 parent = os.path.dirname(cwd)
 sys.path.insert(0, parent)
 
@@ -180,7 +182,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'alotofeffortdoc'
+htmlhelp_basename = 'backfeedapi'
 
 
 # -- Options for LaTeX output --------------------------------------------------

@@ -6,6 +6,8 @@ import config
 from utils import get_contract
 from utils import StrictMappingSchema
 
+# from users import user_to_dict
+
 contribution_collection_service = Service(name='Contribution Collection', path=config.URL_CONTRIBUTION_COLLECTION, description="Contributions")
 contribution_resource_service = Service(name='Contribution Resource', path=config.URL_CONTRIBUTION_RESOURCE, description="Contributions")
 
@@ -86,6 +88,7 @@ def contribution_to_dict(contribution):
             'tokens': user.tokens,
             'reputation': user.relative_reputation(),
         },
+        # 'contributor': user_to_dict(user),
         'type': contribution.contribution_type,
         'stats': stats,
     }
