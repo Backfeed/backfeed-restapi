@@ -160,6 +160,10 @@ class TestContributions(APITestCase):
         self.assertEqual(len(response.json['items']), 1)
         self.assertEqual(response.json['_meta']['total'], 1)
 
+        response = self.app.get(url, {'type': 'article'})
+        self.assertEqual(len(response.json['items']), 3)
+        self.assertEqual(response.json['_meta']['total'], 3)
+
     def test_errors(self):
         response = self.app.get(self.url_resource(123455), expect_errors=True)
         self.assertEqual(response.status_code, 404)
