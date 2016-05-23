@@ -79,6 +79,25 @@ class TestContributions(APITestCase):
         self.assertLess(data['stats']['evaluations']['0']['reputation'], 1.0)
         self.assertLess(data['stats']['evaluations']['1']['reputation'], 1.0)
 
+    def test_create(self):
+        # test for parameters and error handling
+        user = self.contract.create_user()
+        response = self.app.post(self.url_collection, {'contributor_id': user.id})
+        self.assertEqual(response.status_code, 200)
+        response = self.app.post(
+            self.url_collection,
+            {'contributor_id': user.id, 'type': 'comment'},
+            expect_errors=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json['type'], 'comment')
+        response = self.app.post(
+            self.url_collection,
+            {'contributor_id': user.id, 'type': 'somethingthatdoesnotexist'},
+            expect_errors=True
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_collection_get(self):
         # have some data to test with
         contract = self.contract
@@ -100,6 +119,9 @@ class TestContributions(APITestCase):
         app = self.app
         url = self.url_collection
 
+        #
+        # test _meta info
+        #
         result = app.get(url).json
         self.assertEqual(result['_meta']['total'], 3)
         self.assertEqual(result['_meta']['start'], 0)
@@ -129,6 +151,14 @@ class TestContributions(APITestCase):
         result = app.get(url, {'order_by': '-time'}).json
         self.assertEqual(result['items'][0]['id'], contribution2.id)
         self.assertEqual(result['items'][2]['id'], contribution0.id)
+
+        #
+        # test querying
+        #
+        contract.create_contribution(user=user1, contribution_type='comment')
+        response = self.app.get(url, {'type': 'comment'})
+        self.assertEqual(len(response.json['items']), 1)
+        self.assertEqual(response.json['_meta']['total'], 1)
 
     def test_errors(self):
         response = self.app.get(self.url_resource(123455), expect_errors=True)

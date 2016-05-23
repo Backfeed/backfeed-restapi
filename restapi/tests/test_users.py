@@ -67,7 +67,7 @@ class TestUsers(APITestCase):
         response = app.post(url_collection, {'referrer_id': user_id})
         self.assertEqual(response.json['referrer']['id'], user_id)
 
-        # try with a non-exising reference
+        # try with a non-existing reference
         response = app.post(url_collection, {'referrer_id': 123456}, expect_errors=True)
         self.assertEqual(response.status, '400 Bad Request')
 
